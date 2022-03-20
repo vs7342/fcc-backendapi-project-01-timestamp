@@ -66,7 +66,7 @@ app.get(["/api/:datetime", "/api"], (req, res) => {
     // Return a valid response since we now have a valid date
     res.json({
       unix: dateObj.getTime(),
-      utc: dateObj.toString()
+      utc: dateObj.toUTCString()
     });
 
   }
