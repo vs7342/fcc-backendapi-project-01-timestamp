@@ -24,7 +24,54 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+// timestamp endpoint(s)
+app.get(["/api/:datetime", "/api"], (req, res) => {
 
+  let dateObj;
+
+  // Handling empty date parameter (This also handles /api since it wont have datetime param as well)
+  if(!req.params.datetime){
+
+    // Assign current date
+    dateObj = new Date();
+
+  }else{
+    
+    // Extract the datetime parameter
+    let datetime = req.params.datetime;
+
+    // Construct a regex to check if the input purely consist of digits (no dashes)
+    const numRegEx = /^[0-9]*$/;
+    const isNum = numRegEx.test(datetime);
+
+    // If the input is purely made of digits, then parse it into an integer. Else pass the string as it is to the Date constructor.
+    if(isNum){
+      dateObj = new Date(parseInt(datetime));
+    }else{
+      dateObj = new Date(datetime);
+    }
+    
+  }
+
+  // Adding a check for Invalid Date
+  if(dateObj.toString() === "Invalid Date"){
+
+    // Return error response
+    res.json({ 
+      error : "Invalid Date" 
+    });
+
+  }else{
+
+    // Return a valid response since we now have a valid date
+    res.json({
+      unix: dateObj.getTime(),
+      utc: dateObj.toString()
+    });
+
+  }
+
+});
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
